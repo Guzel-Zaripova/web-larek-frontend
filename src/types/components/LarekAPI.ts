@@ -1,5 +1,5 @@
 import { ICard, IOrder, IOrderResult } from '..';
-import { Api, ApiListResponse } from '../../components/base/api';
+import { Api, ApiListResponse } from '../../components/base/Api';
 
 export interface ILarekAPI {
 	getProductList: () => Promise<ICard[]>;
