@@ -102,6 +102,7 @@ interface IOrderForm {
 ```ts
 interface IOrder extends IOrderForm {
 	items: string[];
+	total: numner;
 }
 ```
 
@@ -206,9 +207,11 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 - getTotalPrice(): number — возвращает общую стоимость всех товаров в корзине;
 - setCatalog(items: ICard[]): void — устанавливает новый каталог, создавая экземпляры CardData для каждого элемента;
 - setPreview(item: CardData): void — устанавливает предварительный просмотр для выбранного товара;
-- setOrderField(field: keyof IOrderForm, value: string): void — устанавливает значение для поля заказа и проверяет его на валидность;
+- setPaymentDetailsField(field: keyof IOrderForm, value: string): void — устанавливает значение для данных о способе оплаты с адресом доставки и проверяет их на валидность. Если данные валиден, генерирует событие payment-details:ready;
 - validatePaymentDetails(): boolean — проверяет валидность формы с данными о способе оплаты и адресе доставки;
-- validateContacts(): boolean — проверяет валидность форма с данными о номере телефона и email.
+- setContactsField(field: keyof IOrderForm, value: string): void — устанавливает значение для данных об email с номером телефона и проверяет их на валидность. Если данные валиден, генерирует событие contacts:ready;
+- validateContacts(): boolean — проверяет валидность форма с данными о номере телефона и email;
+- clearOrder(): void — очищает данные о заказе.
 
 ### Классы представления
 

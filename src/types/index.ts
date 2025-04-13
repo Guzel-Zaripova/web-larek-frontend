@@ -1,3 +1,5 @@
+import { CardData } from '../components/model/CardData';
+
 export type TCategory =
 	| 'софт-скил'
 	| 'хард-скил'
@@ -10,7 +12,7 @@ export interface ICard {
 	description: string;
 	image: string;
 	title: string;
-	category: TCategory;
+	category: TCategory | string;
 	price: number | null;
 }
 
@@ -27,18 +29,40 @@ export interface IOrderForm {
 
 export interface IOrder extends IOrderForm {
 	items: string[];
+	total: number;
 }
 
 export interface IOrderResult {
 	id: string;
 }
 
-export interface ILarekData {
-	catalog: ICard[];
-	basket: string[];
-	preview: string | null;
-	order: IOrder | null;
+export interface ILarekAPI {
+	getProductList: () => Promise<ICard[]>;
+	getProductItem: (id: string) => Promise<ICard>;
+	orderProducts: (order: IOrder) => Promise<IOrderResult>;
 }
+
+export interface ILarekData {
+	basket: CardData[];
+	catalog: ICard[];
+	order: IOrder | null;
+	preview: string | null;
+
+	addToBasket(item: CardData): void;
+	deleteFromBasket(id: string): void;
+	clearBasket(): void;
+	getTotalItem(): number;
+	getTotalPrice(): number;
+	setCatalog(items: ICard[]): void;
+	setPreview(item: CardData): void;
+	setPaymentDetailsField(field: keyof IOrderForm, value: string): void;
+	validatePaymentDetails(): boolean;
+	setContactsField(field: keyof IOrderForm, value: string): void;
+	validateContacts(): boolean;
+	clearOrder(): void;
+}
+
+export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
 export type TBasketItem = Pick<ICard, 'id' | 'title' | 'price'>;
 export type TPaymentDetails = Pick<IOrderForm, 'payment' | 'address'>;
