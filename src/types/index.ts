@@ -73,3 +73,7 @@ export interface IPage {
 	counter: number;
 	locked: boolean;
 }
+
+export interface ICardActions {
+	onClick: (event: MouseEvent) => void;
+}

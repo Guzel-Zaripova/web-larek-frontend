@@ -246,13 +246,13 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 В полях класса содержатся следующие данные:
 
 - \_id: string — id товара;
-- description?: HTMLButtonElement — описание товара;
-- image?: HTMLButtonElement — изображение товара;
-- title: HTMLButtonElement — название товара;
-- category?: HTMLButtonElement — категория товара;
-- price: HTMLButtonElement — цена товара;
+- \_description?: HTMLElement — описание товара;
+- \_image?: HTMLImageElement — изображение товара;
+- \_title: HTMLElement — название товара;
+- \_category?: HTMLElement — категория товара;
+- \_price: HTMLElement — цена товара;
 - \_button?: HTMLButtonElement — кнопка добавление товара в корзину;
-- basketIndex?: HTMLButtonElement — индекс товара в списке товаров в корзине.
+- \_index?: HTMLElement — индекс товара в списке товаров в корзине.
 
 Методы класса:\
 Класс предоставляет геттеры и сеттеры для работы с полями класса.
