@@ -95,3 +95,8 @@ export interface ISuccess {
 export interface ISuccessActions {
 	onClick: () => void;
 }
+
+export interface IFormState {
+	valid: boolean;
+	errors: string[];
+}
