@@ -77,3 +77,7 @@ export interface IPage {
 export interface ICardActions {
 	onClick: (event: MouseEvent) => void;
 }
+
+export interface IModalData {
+	content: HTMLElement;
+}
