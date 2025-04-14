@@ -71,5 +71,5 @@ export type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 export interface IPage {
 	catalog: HTMLElement[];
 	counter: number;
-	basket: HTMLElement;
+	locked: boolean;
 }

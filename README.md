@@ -159,7 +159,7 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 
 #### Класс Component
 
-Класс представляет собой дженерик и является базовым для всех компонентов слоя представления. Дженерик принимает тип объекта, который будет использоваться для передачи данных в метод render, отвечающий за отображение информации в компоненте. В конструктор передается элемент разметки, который служит основным родительским контейнером компонента. Класс включает метод render, который сохраняет полученные данные в полях компонентов с помощью их сеттеров и возвращает обновленный контейнер компонента.
+Класс представляет собой дженерик и является базовым для всех компонентов слоя представления. Дженерик принимает тип объекта, который будет использоваться для передачи данных в метод render, отвечающий за отображение информации в компоненте.
 
 Свойство:
 
@@ -169,8 +169,14 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 
 - protected constructor(protected readonly container: HTMLElement)
 
-Метод:
+Методы:
 
+- toggleClass(element: HTMLElement, className: string, force?: boolean) — переключить класс;
+- protected setText(element: HTMLElement, value: unknown) — установить текстовое содержимое;
+- setDisabled(element: HTMLElement, state: boolean) — сменить статус блокировки;
+- protected setHidden(element: HTMLElement) — скрыть;
+- protected setVisible(element: HTMLElement) — показать;
+- protected setImage(element: HTMLImageElement, src: string, alt?: string) — установить изображение с альтернативным текстом;
 - render(data?: Partial<T>): HTMLElement — вернуть корневой DOM-элемент.
 
 ### Слой данных
@@ -226,7 +232,8 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 В полях класса содержатся следующие данные:
 
 - \_catalog: HTMLElement — массив каталога товаров на странице:
-- \_counter: number — счетчик количества элементов в корзине;
+- \_counter: HTMLElement — счетчик количества элементов в корзине;
+- \_wrapper: HTMLElement — обертка для содержимого страницы;
 - \_basket: HTMLElement — кнопка для открытия корзины.
 
 Также класс предоставляет сеттеры для сохранения элементов HTML разметки в контейнере.
