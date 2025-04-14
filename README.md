@@ -274,7 +274,7 @@ type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 В полях класса содержатся следующие данные:
 
 - \_list: HTMLElement — список товаров в корзине;
-- \_totalPrice: HTMLElement — общая стоимость товаров в корзине;
+- \_price: HTMLElement — общая стоимость товаров в корзине;
 - \_button: HTMLElement — элемент кнопки для оформления заказа.
 
 Методы класса:\

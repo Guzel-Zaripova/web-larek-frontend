@@ -81,3 +81,9 @@ export interface ICardActions {
 export interface IModalData {
 	content: HTMLElement;
 }
+
+export interface IBasketView {
+	items: HTMLElement[];
+	total: number;
+	selected: string[];
+}
