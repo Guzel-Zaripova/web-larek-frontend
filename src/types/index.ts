@@ -87,3 +87,11 @@ export interface IBasketView {
 	total: number;
 	selected: string[];
 }
+
+export interface ISuccess {
+	description: number;
+}
+
+export interface ISuccessActions {
+	onClick: () => void;
+}
