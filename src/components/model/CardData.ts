@@ -8,4 +8,5 @@ export class CardData extends Model<ICard> {
 	title: string;
 	category: TCategory;
 	price: number | null;
+	selected: boolean;
 }

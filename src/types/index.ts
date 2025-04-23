@@ -12,8 +12,9 @@ export interface ICard {
 	description: string;
 	image: string;
 	title: string;
-	category: TCategory | string;
+	category: TCategory;
 	price: number | null;
+	selected: boolean;
 }
 
 export interface IBasket {
@@ -73,6 +74,10 @@ export interface IPage {
 	counter: number;
 	locked: boolean;
 }
+
+export type CatalogChangeEvent = {
+	catalog: CardData[];
+};
 
 export interface ICardActions {
 	onClick: (event: MouseEvent) => void;

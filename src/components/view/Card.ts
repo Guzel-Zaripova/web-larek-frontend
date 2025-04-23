@@ -1,4 +1,5 @@
-import { ICard, ICardActions } from '../../types';
+import { ICard, ICardActions, TCategory } from '../../types';
+import { category } from '../../utils/constants';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 
@@ -54,6 +55,11 @@ export class Card extends Component<ICard> {
 		return this._title.textContent || '';
 	}
 
+	set category(value: TCategory) {
+		this.setText(this._category, value);
+		this._category.classList.add(category[value]);
+	}
+
 	set image(value: string) {
 		this.setImage(this._image, value, this.title);
 	}
@@ -64,5 +70,20 @@ export class Card extends Component<ICard> {
 
 	set index(value: number) {
 		this._index.textContent = value.toString();
+	}
+
+	set price(value: number | null) {
+		this._price.textContent = this.formatPrice(value);
+
+		if (this._button) {
+			this._button.disabled = value === null;
+		}
+	}
+
+	private formatPrice(value: number | null): string {
+		if (value === null) {
+			return 'Бесценно';
+		}
+		return `${value} синапсов`;
 	}
 }

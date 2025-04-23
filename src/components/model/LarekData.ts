@@ -4,7 +4,7 @@ import { FormErrors, ICard, ILarekData, IOrder, IOrderForm } from '../../types';
 
 export class LarekData extends Model<ILarekData> {
 	basket: CardData[] = [];
-	catalog: ICard[];
+	catalog: CardData[];
 	order: IOrder = {
 		payment: '',
 		address: '',
