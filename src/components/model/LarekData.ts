@@ -3,7 +3,6 @@ import { CardData } from './CardData';
 import { FormErrors, ICard, ILarekData, IOrder, IOrderForm } from '../../types';
 
 export class LarekData extends Model<ILarekData> {
-	basket: CardData[] = [];
 	catalog: CardData[];
 	order: IOrder = {
 		payment: '',
@@ -16,32 +15,28 @@ export class LarekData extends Model<ILarekData> {
 	preview: string | null;
 	formErrors: FormErrors = {};
 
-	addToBasket(item: CardData): void {
-		this.basket.push(item);
+	addItem(item: CardData): void {
+		this.order.items.push(item);
+		this.emitChanges('card:added');
 	}
 
-	deleteFromBasket(id: string): void {
-		const index = this.basket.findIndex((item) => item.id === id);
+	deleteItem(id: string): void {
+		const index = this.order.items.findIndex((item) => item.id === id);
 		if (index !== -1) {
-			this.basket.splice(index, 1);
+			this.order.items.splice(index, 1);
+			this.emitChanges('card:deleted');
 		}
 	}
 
-	clearBasket(): void {
-		this.order.items.forEach((id) => {
-			this.deleteFromBasket(id);
-		});
-	}
-
 	getTotalItem(): number {
-		return this.basket.length;
+		return this.order.items.length;
 	}
 
 	getTotalPrice(): number {
 		return this.order.items.reduce(
 			(accumulator, currentValue) =>
 				accumulator +
-				this.catalog.find((items) => items.id === currentValue).price,
+				this.catalog.find((items) => items.id === currentValue.id).price,
 			0
 		);
 	}

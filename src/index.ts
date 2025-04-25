@@ -66,7 +66,9 @@ events.on('card:select', (item: CardData) => {
 
 events.on('preview:changed', (item: CardData) => {
 	const showItem = (item: CardData) => {
-		const card = new Card('card', cloneTemplate(cardPreviewTemplate));
+		const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
+			onClick: () => events.emit('card:add', item),
+		});
 
 		modal.render({
 			content: card.render({
@@ -78,6 +80,10 @@ events.on('preview:changed', (item: CardData) => {
 				price: item.price,
 			}),
 		});
+
+		if (item.selected === true) {
+			card.button = true;
+		}
 	};
 
 	if (item) {
@@ -100,4 +106,14 @@ events.on('modal:open', () => {
 
 events.on('modal:close', () => {
 	page.locked = false;
+});
+
+events.on('card:add', (item: CardData) => {
+	appData.addItem(item);
+	item.selected = true;
+});
+
+events.on('card:added', (item: CardData) => {
+	page.counter = appData.getTotalItem();
+	modal.close();
 });

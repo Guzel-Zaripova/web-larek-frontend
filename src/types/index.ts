@@ -29,7 +29,7 @@ export interface IOrderForm {
 }
 
 export interface IOrder extends IOrderForm {
-	items: string[];
+	items: ICard[];
 	total: number;
 }
 

@@ -80,6 +80,10 @@ export class Card extends Component<ICard> {
 		}
 	}
 
+	set button(value: boolean) {
+		this._button.disabled = value;
+	}
+
 	private formatPrice(value: number | null): string {
 		if (value === null) {
 			return 'Бесценно';
