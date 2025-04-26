@@ -9,13 +9,11 @@ export type TCategory =
 
 export interface ICard {
 	id: string;
-	description?: string;
-	image?: string;
+	description: string;
+	image: string;
 	title: string;
-	category?: TCategory;
+	category: TCategory;
 	price: number | null;
-	selected?: boolean;
-	index?: number;
 }
 
 export interface IBasket {
@@ -105,11 +103,6 @@ export interface ISuccessActions {
 export interface IFormState {
 	valid: boolean;
 	errors: string[];
-}
-
-export interface CardView {
-	title: string;
-	price: number | null;
 }
 
 export interface CardCatalog {

@@ -3,7 +3,7 @@ import { CardData } from './components/model/CardData';
 import { LarekApi } from './components/model/LarekAPI';
 import { LarekData } from './components/model/LarekData';
 import { Basket } from './components/view/Basket';
-import { Card } from './components/view/Card';
+import { CardCatalog, CardPreview, CardBasket } from './components/view/Card';
 import { Contacts } from './components/view/Contacts';
 import { Modal } from './components/view/Modal';
 import { Page } from './components/view/Page';
@@ -47,7 +47,7 @@ api
 
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.catalog.map((item) => {
-		const card = new Card('card', cloneTemplate(cardCatalogTemplate), {
+		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('card:select', item),
 		});
 		return card.render({
@@ -64,34 +64,36 @@ events.on('card:select', (item: CardData) => {
 	appData.setPreview(item);
 });
 
+const renderCardPreview = (item: CardData) => {
+	const selected = appData.order.items.some(
+		(orderItem) => orderItem.id === item.id
+	);
+	const eventType = selected ? 'card:delete' : 'card:add';
+	const actionText = selected ? 'Удалить' : 'В корзину';
+
+	const card = new CardPreview(cloneTemplate(cardPreviewTemplate), {
+		onClick: () => events.emit(eventType, item),
+	});
+
+	modal.render({
+		content: card.render({
+			id: item.id,
+			title: item.title,
+			image: item.image,
+			description: item.description,
+			category: item.category,
+			price: item.price,
+			actionText,
+		}),
+	});
+};
+
 events.on('preview:changed', (item: CardData) => {
-	const showItem = (item: CardData) => {
-		const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
-			onClick: () => events.emit('card:add', item),
-		});
-
-		modal.render({
-			content: card.render({
-				id: item.id,
-				title: item.title,
-				image: item.image,
-				description: item.description,
-				category: item.category,
-				price: item.price,
-				selected: item.selected,
-			}),
-		});
-
-		// if (item.selected === true) {
-		// 	card.button = true;
-		// }
-	};
-
 	if (item) {
 		api
 			.getProductItem(item.id)
 			.then(() => {
-				showItem(item);
+				renderCardPreview(item);
 			})
 			.catch((err) => {
 				console.error(err);
@@ -107,28 +109,53 @@ events.on('modal:open', () => {
 
 events.on('modal:close', () => {
 	page.locked = false;
+	appData.clearPreview();
 });
 
 events.on('card:add', (item: CardData) => {
-	item.selected = true;
 	appData.addItem(item);
 });
 
 events.on('card:added', (item: CardData) => {
 	page.counter = appData.getTotalItem();
-	const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
-		onClick: () => events.emit('card:delete', item),
+	renderCardPreview(item);
+});
+
+events.on('card:delete', (item: CardData) => {
+	appData.deleteItem(item);
+});
+
+events.on('card:deleted', (item: CardData) => {
+	page.counter = appData.getTotalItem();
+	if (appData.preview === item.id) {
+		renderCardPreview(item);
+	} else {
+		renderBasket();
+	}
+});
+
+function renderBasket() {
+	const basketItems = appData.order.items.map((item, index) => {
+		const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
+			onClick: () => events.emit('card:delete', item),
+		});
+
+		return card.render({
+			title: item.title,
+			price: item.price,
+			index: index + 1,
+		});
 	});
 
+	basket.selected = appData.order.items;
 	modal.render({
-		content: card.render({
-			id: item.id,
-			title: item.title,
-			image: item.image,
-			description: item.description,
-			category: item.category,
-			price: item.price,
-			selected: item.selected,
+		content: basket.render({
+			list: basketItems,
+			price: appData.getTotalPrice(),
 		}),
 	});
+}
+
+events.on('basket:open', () => {
+	renderBasket();
 });

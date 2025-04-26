@@ -20,11 +20,13 @@ export class LarekData extends Model<ILarekData> {
 		this.emitChanges('card:added', item);
 	}
 
-	deleteItem(id: string): void {
-		const index = this.order.items.findIndex((item) => item.id === id);
+	deleteItem(item: CardData): void {
+		const index = this.order.items.findIndex(
+			(orderItem) => orderItem.id === item.id
+		);
 		if (index !== -1) {
 			this.order.items.splice(index, 1);
-			this.emitChanges('card:deleted');
+			this.emitChanges('card:deleted', item);
 		}
 	}
 
@@ -49,6 +51,10 @@ export class LarekData extends Model<ILarekData> {
 	setPreview(item: CardData): void {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
+	}
+
+	clearPreview() {
+		this.preview = null;
 	}
 
 	setPaymentDetailsField(field: keyof IOrderForm, value: string): void {
