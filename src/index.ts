@@ -78,12 +78,13 @@ events.on('preview:changed', (item: CardData) => {
 				description: item.description,
 				category: item.category,
 				price: item.price,
+				selected: item.selected,
 			}),
 		});
 
-		if (item.selected === true) {
-			card.button = true;
-		}
+		// if (item.selected === true) {
+		// 	card.button = true;
+		// }
 	};
 
 	if (item) {
@@ -109,11 +110,25 @@ events.on('modal:close', () => {
 });
 
 events.on('card:add', (item: CardData) => {
-	appData.addItem(item);
 	item.selected = true;
+	appData.addItem(item);
 });
 
 events.on('card:added', (item: CardData) => {
 	page.counter = appData.getTotalItem();
-	modal.close();
+	const card = new Card('card', cloneTemplate(cardPreviewTemplate), {
+		onClick: () => events.emit('card:delete', item),
+	});
+
+	modal.render({
+		content: card.render({
+			id: item.id,
+			title: item.title,
+			image: item.image,
+			description: item.description,
+			category: item.category,
+			price: item.price,
+			selected: item.selected,
+		}),
+	});
 });

@@ -17,7 +17,7 @@ export class LarekData extends Model<ILarekData> {
 
 	addItem(item: CardData): void {
 		this.order.items.push(item);
-		this.emitChanges('card:added');
+		this.emitChanges('card:added', item);
 	}
 
 	deleteItem(id: string): void {

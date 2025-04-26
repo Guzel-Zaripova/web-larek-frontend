@@ -9,12 +9,13 @@ export type TCategory =
 
 export interface ICard {
 	id: string;
-	description: string;
-	image: string;
+	description?: string;
+	image?: string;
 	title: string;
-	category: TCategory;
+	category?: TCategory;
 	price: number | null;
-	selected: boolean;
+	selected?: boolean;
+	index?: number;
 }
 
 export interface IBasket {
@@ -88,8 +89,8 @@ export interface IModalData {
 }
 
 export interface IBasketView {
-	items: HTMLElement[];
-	total: number;
+	list: HTMLElement[];
+	price: number;
 	selected: string[];
 }
 
@@ -104,4 +105,30 @@ export interface ISuccessActions {
 export interface IFormState {
 	valid: boolean;
 	errors: string[];
+}
+
+export interface CardView {
+	title: string;
+	price: number | null;
+}
+
+export interface CardCatalog {
+	title: string;
+	price: number | null;
+	image: string;
+	category: TCategory;
+}
+
+export interface CardPreview {
+	title: string;
+	price: number | null;
+	image: string;
+	category: TCategory;
+	description: string;
+}
+
+export interface CardBasket {
+	title: string;
+	price: number | null;
+	index: number;
 }
