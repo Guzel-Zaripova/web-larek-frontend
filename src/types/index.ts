@@ -32,14 +32,20 @@ export interface IOrder extends IOrderForm {
 	total: number;
 }
 
+export interface IOrderProducts extends IOrderForm {
+	items: string[];
+	total: number;
+}
+
 export interface IOrderResult {
 	id: string;
+	total: number;
 }
 
 export interface ILarekAPI {
 	getProductList: () => Promise<ICard[]>;
 	getProductItem: (id: string) => Promise<ICard>;
-	orderProducts: (order: IOrder) => Promise<IOrderResult>;
+	orderProducts: (order: IOrderProducts) => Promise<IOrderResult>;
 }
 
 export interface ILarekData {

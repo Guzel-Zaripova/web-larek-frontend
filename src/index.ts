@@ -225,3 +225,35 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
 		.filter((i) => !!i)
 		.join('; ');
 });
+
+events.on('contacts:submit', () => {
+	const apiData = {
+		payment: appData.order.payment,
+		email: appData.order.email,
+		phone: appData.order.phone,
+		address: appData.order.address,
+		total: appData.getTotalPrice(),
+		items: appData.order.items.map((item) => item.id),
+	};
+
+	api
+		.orderProducts(apiData)
+		.then((result) => {
+			appData.clearOrder();
+			page.counter = appData.getTotalItem();
+			const success = new Success(cloneTemplate(successTemplate), {
+				onClick: () => {
+					modal.close();
+				},
+			});
+
+			modal.render({
+				content: success.render({
+					description: result.total,
+				}),
+			});
+		})
+		.catch((err) => {
+			console.error(err);
+		});
+});
