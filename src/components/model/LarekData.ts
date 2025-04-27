@@ -57,15 +57,15 @@ export class LarekData extends Model<ILarekData> {
 		this.preview = null;
 	}
 
-	setPaymentDetailsField(field: keyof IOrderForm, value: string): void {
+	setOrderField(field: keyof IOrderForm, value: string): void {
 		this.order[field] = value;
 
-		if (this.validatePaymentDetails()) {
-			this.events.emit('payment-details:ready', this.order);
+		if (this.validateOrder()) {
+			this.events.emit('order:ready', this.order);
 		}
 	}
 
-	validatePaymentDetails(): boolean {
+	validateOrder(): boolean {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.payment) {
 			errors.payment = 'Необходимо указать способ оплаты';
@@ -74,7 +74,7 @@ export class LarekData extends Model<ILarekData> {
 			errors.address = 'Необходимо указать адрес доставки';
 		}
 		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this.events.emit('orderFormErrors:change', this.formErrors);
 		return Object.keys(errors).length === 0;
 	}
 
@@ -95,7 +95,7 @@ export class LarekData extends Model<ILarekData> {
 			errors.phone = 'Необходимо указать телефон';
 		}
 		this.formErrors = errors;
-		this.events.emit('formErrors:change', this.formErrors);
+		this.events.emit('contactsFormErrors:change', this.formErrors);
 		return Object.keys(errors).length === 0;
 	}
 

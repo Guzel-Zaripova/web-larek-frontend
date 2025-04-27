@@ -14,13 +14,17 @@ export class PaymentDetails extends Form<TPaymentDetails> {
 
 		if (this._card) {
 			this._card.addEventListener('click', () => {
-				events.emit('card:change');
+				this._card.classList.add('button_alt-active');
+				this._cash.classList.remove('button_alt-active');
+				events.emit('order.card:change');
 			});
 		}
 
 		if (this._cash) {
 			this._cash.addEventListener('click', () => {
-				events.emit('cash:change');
+				this._cash.classList.add('button_alt-active');
+				this._card.classList.remove('button_alt-active');
+				events.emit('order.cash:change');
 			});
 		}
 	}
@@ -28,9 +32,5 @@ export class PaymentDetails extends Form<TPaymentDetails> {
 	set address(value: string) {
 		(this.container.elements.namedItem('address') as HTMLInputElement).value =
 			value;
-	}
-
-	set payment(value: 'card' | 'cash') {
-		this[`_${value}`].classList.toggle('button_alt-active');
 	}
 }

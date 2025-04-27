@@ -10,7 +10,7 @@ import { Page } from './components/view/Page';
 import { PaymentDetails } from './components/view/PaymentDetails';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { CatalogChangeEvent } from './types';
+import { CatalogChangeEvent, IOrderForm } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
@@ -158,4 +158,70 @@ function renderBasket() {
 
 events.on('basket:open', () => {
 	renderBasket();
+});
+
+events.on('basket:submit', () => {
+	modal.render({
+		content: order.render({
+			address: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+events.on('order.card:change', () => {
+	appData.setOrderField('payment', 'card');
+});
+
+events.on('order.cash:change', () => {
+	appData.setOrderField('payment', 'cash');
+});
+
+events.on<{ field: string; value: string }>(
+	'order.address:change',
+	(address) => {
+		appData.setOrderField('address', address.value);
+	}
+);
+
+events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
+	const { payment, address } = errors;
+	order.valid = !payment && !address;
+	order.errors = Object.values({ address, payment })
+		.filter((i) => !!i)
+		.join('; ');
+});
+
+events.on('order:submit', () => {
+	modal.render({
+		content: contacts.render({
+			email: '',
+			phone: '',
+			valid: false,
+			errors: [],
+		}),
+	});
+});
+
+events.on<{ field: string; value: string }>(
+	'contacts.email:change',
+	(email) => {
+		appData.setContactsField('email', email.value);
+	}
+);
+
+events.on<{ field: string; value: string }>(
+	'contacts.phone:change',
+	(phone) => {
+		appData.setContactsField('phone', phone.value);
+	}
+);
+
+events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
+	const { email, phone } = errors;
+	contacts.valid = !email && !phone;
+	contacts.errors = Object.values({ phone, email })
+		.filter((i) => !!i)
+		.join('; ');
 });
