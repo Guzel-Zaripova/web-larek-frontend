@@ -16,10 +16,6 @@ export interface ICard {
 	price: number | null;
 }
 
-export interface IBasket {
-	items: string[];
-}
-
 export interface IOrderForm {
 	payment: string;
 	address: string;
@@ -49,20 +45,19 @@ export interface ILarekAPI {
 }
 
 export interface ILarekData {
-	basket: CardData[];
-	catalog: ICard[];
-	order: IOrder | null;
+	catalog: CardData[];
+	order: IOrder;
 	preview: string | null;
 
 	addToBasket(item: CardData): void;
-	deleteFromBasket(id: string): void;
-	clearBasket(): void;
+	deleteItem(item: CardData): void;
 	getTotalItem(): number;
 	getTotalPrice(): number;
 	setCatalog(items: ICard[]): void;
 	setPreview(item: CardData): void;
-	setPaymentDetailsField(field: keyof IOrderForm, value: string): void;
-	validatePaymentDetails(): boolean;
+	clearPreview(): void;
+	setOrderField(field: keyof IOrderForm, value: string): void;
+	validateOrder(): boolean;
 	setContactsField(field: keyof IOrderForm, value: string): void;
 	validateContacts(): boolean;
 	clearOrder(): void;
@@ -70,7 +65,6 @@ export interface ILarekData {
 
 export type FormErrors = Partial<Record<keyof IOrder, string>>;
 
-export type TBasketItem = Pick<ICard, 'id' | 'title' | 'price'>;
 export type TPaymentDetails = Pick<IOrderForm, 'payment' | 'address'>;
 export type TContacts = Pick<IOrderForm, 'email' | 'phone'>;
 
@@ -87,6 +81,15 @@ export type CatalogChangeEvent = {
 export interface ICardActions {
 	onClick: (event: MouseEvent) => void;
 }
+
+export type CardCatalog = Pick<ICard, 'title' | 'price' | 'image' | 'category'>;
+export type CardPreview = Pick<
+	ICard,
+	'title' | 'price' | 'image' | 'category' | 'description'
+>;
+export type CardBasket = Pick<ICard, 'title' | 'price'> & {
+	index: number;
+};
 
 export interface IModalData {
 	content: HTMLElement;
@@ -111,23 +114,4 @@ export interface IFormState {
 	errors: string[];
 }
 
-export interface CardCatalog {
-	title: string;
-	price: number | null;
-	image: string;
-	category: TCategory;
-}
-
-export interface CardPreview {
-	title: string;
-	price: number | null;
-	image: string;
-	category: TCategory;
-	description: string;
-}
-
-export interface CardBasket {
-	title: string;
-	price: number | null;
-	index: number;
-}
+export type TFormErrors = Partial<Record<keyof IOrderForm, string>>;

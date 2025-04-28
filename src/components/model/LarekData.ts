@@ -1,6 +1,7 @@
 import { Model } from '../base/Model';
 import { CardData } from './CardData';
 import { FormErrors, ICard, ILarekData, IOrder, IOrderForm } from '../../types';
+import { formError } from '../../utils/constants';
 
 export class LarekData extends Model<ILarekData> {
 	catalog: CardData[];
@@ -53,7 +54,7 @@ export class LarekData extends Model<ILarekData> {
 		this.emitChanges('preview:changed', item);
 	}
 
-	clearPreview() {
+	clearPreview(): void {
 		this.preview = null;
 	}
 
@@ -68,10 +69,10 @@ export class LarekData extends Model<ILarekData> {
 	validateOrder(): boolean {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.payment) {
-			errors.payment = 'Необходимо указать способ оплаты';
+			errors.payment = formError.payment;
 		}
 		if (!this.order.address) {
-			errors.address = 'Необходимо указать адрес доставки';
+			errors.address = formError.address;
 		}
 		this.formErrors = errors;
 		this.events.emit('orderFormErrors:change', this.formErrors);
@@ -89,10 +90,10 @@ export class LarekData extends Model<ILarekData> {
 	validateContacts(): boolean {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.email) {
-			errors.email = 'Необходимо указать email';
+			errors.email = formError.email;
 		}
 		if (!this.order.phone) {
-			errors.phone = 'Необходимо указать телефон';
+			errors.phone = formError.phone;
 		}
 		this.formErrors = errors;
 		this.events.emit('contactsFormErrors:change', this.formErrors);

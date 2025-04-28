@@ -1,5 +1,5 @@
 import { ICardActions, TCategory } from '../../types';
-import { category } from '../../utils/constants';
+import { cardCategory } from '../../utils/constants';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 
@@ -61,8 +61,8 @@ export class Card<T> extends Component<T> {
 }
 
 export class CardCatalog extends Card<CardCatalog> {
-	protected _category?: HTMLElement;
-	protected _image?: HTMLImageElement;
+	protected _category: HTMLElement;
+	protected _image: HTMLImageElement;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super('card', container, actions);
@@ -73,7 +73,7 @@ export class CardCatalog extends Card<CardCatalog> {
 
 	set category(value: TCategory) {
 		this.setText(this._category, value);
-		this._category.classList.add(category[value]);
+		this._category.classList.add(cardCategory[value]);
 	}
 
 	set image(value: string) {
@@ -82,9 +82,9 @@ export class CardCatalog extends Card<CardCatalog> {
 }
 
 export class CardPreview extends Card<CardPreview> {
-	protected _category?: HTMLElement;
-	protected _image?: HTMLImageElement;
-	protected _description?: HTMLElement;
+	protected _category: HTMLElement;
+	protected _image: HTMLImageElement;
+	protected _description: HTMLElement;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super('card', container, actions);
@@ -96,7 +96,7 @@ export class CardPreview extends Card<CardPreview> {
 
 	set category(value: TCategory) {
 		this.setText(this._category, value);
-		this._category.classList.add(category[value]);
+		this._category.classList.add(cardCategory[value]);
 	}
 
 	set image(value: string) {
@@ -113,7 +113,7 @@ export class CardPreview extends Card<CardPreview> {
 }
 
 export class CardBasket extends Card<CardBasket> {
-	protected _index?: HTMLElement;
+	protected _index: HTMLElement;
 
 	constructor(container: HTMLElement, actions?: ICardActions) {
 		super('card', container, actions);

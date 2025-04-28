@@ -1,6 +1,6 @@
 import { EventEmitter } from './components/base/Events';
 import { CardData } from './components/model/CardData';
-import { LarekApi } from './components/model/LarekAPI';
+import { LarekApi } from './components/LarekAPI';
 import { LarekData } from './components/model/LarekData';
 import { Basket } from './components/view/Basket';
 import { CardCatalog, CardPreview, CardBasket } from './components/view/Card';
@@ -17,10 +17,6 @@ import { cloneTemplate, ensureElement } from './utils/utils';
 const events = new EventEmitter();
 const api = new LarekApi(CDN_URL, API_URL);
 
-events.onAll(({ eventName, data }) => {
-	console.log(eventName, data);
-});
-
 const cardCatalogTemplate = ensureElement<HTMLTemplateElement>('#card-catalog');
 const cardPreviewTemplate = ensureElement<HTMLTemplateElement>('#card-preview');
 const cardBasketTemplate = ensureElement<HTMLTemplateElement>('#card-basket');
@@ -33,11 +29,11 @@ const appData = new LarekData({}, events);
 
 const page = new Page(document.body, events);
 const modal = new Modal(ensureElement<HTMLElement>('#modal-container'), events);
-
 const basket = new Basket(cloneTemplate(basketTemplate), events);
 const order = new PaymentDetails(cloneTemplate(orderTemplate), events);
 const contacts = new Contacts(cloneTemplate(contactsTemplate), events);
 
+// получение каталога карточек с сервера api
 api
 	.getProductList()
 	.then(appData.setCatalog.bind(appData))
@@ -45,6 +41,7 @@ api
 		console.error(err);
 	});
 
+// вывод каталога карточек на странице
 events.on<CatalogChangeEvent>('items:changed', () => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
@@ -60,10 +57,12 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 	});
 });
 
+// пользователь выбирает карточку
 events.on('card:select', (item: CardData) => {
 	appData.setPreview(item);
 });
 
+// рендер карточки в превью
 const renderCardPreview = (item: CardData) => {
 	const selected = appData.order.items.some(
 		(orderItem) => orderItem.id === item.id
@@ -88,6 +87,7 @@ const renderCardPreview = (item: CardData) => {
 	});
 };
 
+// изменяется элемент предварительного просмотра
 events.on('preview:changed', (item: CardData) => {
 	if (item) {
 		api
@@ -103,28 +103,34 @@ events.on('preview:changed', (item: CardData) => {
 	}
 });
 
+// открытие модального окна
 events.on('modal:open', () => {
 	page.locked = true;
 });
 
+// закрытие модального окна
 events.on('modal:close', () => {
 	page.locked = false;
 	appData.clearPreview();
 });
 
+// пользователь добавляет карточку в корзину
 events.on('card:add', (item: CardData) => {
 	appData.addItem(item);
 });
 
+// в заказ добавляется новый элемент
 events.on('card:added', (item: CardData) => {
 	page.counter = appData.getTotalItem();
 	renderCardPreview(item);
 });
 
+// пользователь удаляет карточку из корзины
 events.on('card:delete', (item: CardData) => {
 	appData.deleteItem(item);
 });
 
+// из заказа удаляется элемент
 events.on('card:deleted', (item: CardData) => {
 	page.counter = appData.getTotalItem();
 	if (appData.preview === item.id) {
@@ -134,6 +140,7 @@ events.on('card:deleted', (item: CardData) => {
 	}
 });
 
+// рендер корзины товаров
 function renderBasket() {
 	const basketItems = appData.order.items.map((item, index) => {
 		const card = new CardBasket(cloneTemplate(cardBasketTemplate), {
@@ -156,10 +163,12 @@ function renderBasket() {
 	});
 }
 
+// открывается корзина
 events.on('basket:open', () => {
 	renderBasket();
 });
 
+// пользователь подтверждает корзину и переходит к окну заказа
 events.on('basket:submit', () => {
 	modal.render({
 		content: order.render({
@@ -170,14 +179,17 @@ events.on('basket:submit', () => {
 	});
 });
 
+// пользователь выбирает оплату картой
 events.on('order.card:change', () => {
 	appData.setOrderField('payment', 'card');
 });
 
+// пользователь выбирает оплату наличными
 events.on('order.cash:change', () => {
 	appData.setOrderField('payment', 'cash');
 });
 
+// изменяется адрес в форме заказа
 events.on<{ field: string; value: string }>(
 	'order.address:change',
 	(address) => {
@@ -185,6 +197,7 @@ events.on<{ field: string; value: string }>(
 	}
 );
 
+// изменяются ошибки в форме заказа
 events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
@@ -193,6 +206,7 @@ events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
 		.join('; ');
 });
 
+// переход из окна с информацией о заказе к следующему окну
 events.on('order:submit', () => {
 	modal.render({
 		content: contacts.render({
@@ -204,6 +218,7 @@ events.on('order:submit', () => {
 	});
 });
 
+// изменяется электронная почта в форме контактов
 events.on<{ field: string; value: string }>(
 	'contacts.email:change',
 	(email) => {
@@ -211,6 +226,7 @@ events.on<{ field: string; value: string }>(
 	}
 );
 
+// изменяется телефон в форме контактов
 events.on<{ field: string; value: string }>(
 	'contacts.phone:change',
 	(phone) => {
@@ -218,6 +234,7 @@ events.on<{ field: string; value: string }>(
 	}
 );
 
+// изменяются ошибки в форме контактной информации
 events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
 	const { email, phone } = errors;
 	contacts.valid = !email && !phone;
@@ -226,6 +243,7 @@ events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
 		.join('; ');
 });
 
+// пользователь подтверждает контактную информацию
 events.on('contacts:submit', () => {
 	const apiData = {
 		payment: appData.order.payment,
@@ -236,6 +254,8 @@ events.on('contacts:submit', () => {
 		items: appData.order.items.map((item) => item.id),
 	};
 
+	// отправка информации о заказе на сервер api
+	// и рендер окна с информацией об успешном заказе
 	api
 		.orderProducts(apiData)
 		.then((result) => {
