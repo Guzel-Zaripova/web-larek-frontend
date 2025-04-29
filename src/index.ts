@@ -10,7 +10,7 @@ import { PaymentDetails } from './components/view/PaymentDetails';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
 import { CatalogChangeEvent, ICard, IOrderForm } from './types';
-import { API_URL, CDN_URL } from './utils/constants';
+import { API_URL, CDN_URL, ModelEvent, ViewEvent } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
 const events = new EventEmitter();
@@ -41,7 +41,7 @@ api
 	});
 
 // вывод каталога карточек на странице
-events.on<CatalogChangeEvent>('items:changed', () => {
+events.on<CatalogChangeEvent>(ModelEvent.ItemsChanged, () => {
 	page.catalog = appData.catalog.map((item) => {
 		const card = new CardCatalog(cloneTemplate(cardCatalogTemplate), {
 			onClick: () => events.emit('card:select', item),
@@ -57,7 +57,7 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 });
 
 // пользователь выбирает карточку
-events.on('card:select', (item: ICard) => {
+events.on(ViewEvent.CardSelect, (item: ICard) => {
 	appData.setPreview(item);
 });
 
@@ -87,7 +87,7 @@ const renderCardPreview = (item: ICard) => {
 };
 
 // изменяется элемент предварительного просмотра
-events.on('preview:changed', (item: ICard) => {
+events.on(ModelEvent.PreviewChanged, (item: ICard) => {
 	if (item) {
 		renderCardPreview(item);
 	} else {
@@ -96,34 +96,34 @@ events.on('preview:changed', (item: ICard) => {
 });
 
 // открытие модального окна
-events.on('modal:open', () => {
+events.on(ViewEvent.ModalOpen, () => {
 	page.locked = true;
 });
 
 // закрытие модального окна
-events.on('modal:close', () => {
+events.on(ViewEvent.ModalClose, () => {
 	page.locked = false;
 	appData.clearPreview();
 });
 
 // пользователь добавляет карточку в корзину
-events.on('card:add', (item: ICard) => {
+events.on(ViewEvent.CardAdd, (item: ICard) => {
 	appData.addItem(item);
 });
 
 // в заказ добавляется новый элемент
-events.on('card:added', (item: ICard) => {
+events.on(ModelEvent.CardAdded, (item: ICard) => {
 	page.counter = appData.getTotalItem();
 	renderCardPreview(item);
 });
 
 // пользователь удаляет карточку из корзины
-events.on('card:delete', (item: ICard) => {
+events.on(ViewEvent.CardDelete, (item: ICard) => {
 	appData.deleteItem(item);
 });
 
 // из заказа удаляется элемент
-events.on('card:deleted', (item: ICard) => {
+events.on(ModelEvent.CardDeleted, (item: ICard) => {
 	page.counter = appData.getTotalItem();
 	if (appData.preview === item.id) {
 		renderCardPreview(item);
@@ -156,12 +156,12 @@ function renderBasket() {
 }
 
 // открывается корзина
-events.on('basket:open', () => {
+events.on(ViewEvent.BasketOpen, () => {
 	renderBasket();
 });
 
 // пользователь подтверждает корзину и переходит к окну заказа
-events.on('basket:submit', () => {
+events.on(ViewEvent.BasketSubmit, () => {
 	modal.render({
 		content: order.render({
 			address: '',
@@ -172,25 +172,25 @@ events.on('basket:submit', () => {
 });
 
 // пользователь выбирает оплату картой
-events.on('order.card:change', () => {
+events.on(ViewEvent.OrderCardChange, () => {
 	appData.setOrderField('payment', 'card');
 });
 
 // пользователь выбирает оплату наличными
-events.on('order.cash:change', () => {
+events.on(ViewEvent.OrderCashChange, () => {
 	appData.setOrderField('payment', 'cash');
 });
 
 // изменяется адрес в форме заказа
 events.on<{ field: string; value: string }>(
-	'order.address:change',
+	ViewEvent.OrderAddressChange,
 	(address) => {
 		appData.setOrderField('address', address.value);
 	}
 );
 
 // изменяются ошибки в форме заказа
-events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
+events.on(ModelEvent.OrderFormErrorsChange, (errors: Partial<IOrderForm>) => {
 	const { payment, address } = errors;
 	order.valid = !payment && !address;
 	order.errors = Object.values({ address, payment })
@@ -199,7 +199,7 @@ events.on('orderFormErrors:change', (errors: Partial<IOrderForm>) => {
 });
 
 // переход из окна с информацией о заказе к следующему окну
-events.on('order:submit', () => {
+events.on(ViewEvent.OrderSubmit, () => {
 	modal.render({
 		content: contacts.render({
 			email: '',
@@ -212,7 +212,7 @@ events.on('order:submit', () => {
 
 // изменяется электронная почта в форме контактов
 events.on<{ field: string; value: string }>(
-	'contacts.email:change',
+	ViewEvent.ContactsEmailChange,
 	(email) => {
 		appData.setContactsField('email', email.value);
 	}
@@ -220,23 +220,26 @@ events.on<{ field: string; value: string }>(
 
 // изменяется телефон в форме контактов
 events.on<{ field: string; value: string }>(
-	'contacts.phone:change',
+	ViewEvent.ContactsPhoneChange,
 	(phone) => {
 		appData.setContactsField('phone', phone.value);
 	}
 );
 
 // изменяются ошибки в форме контактной информации
-events.on('contactsFormErrors:change', (errors: Partial<IOrderForm>) => {
-	const { email, phone } = errors;
-	contacts.valid = !email && !phone;
-	contacts.errors = Object.values({ phone, email })
-		.filter((i) => !!i)
-		.join('; ');
-});
+events.on(
+	ModelEvent.ContactsFormErrorsChange,
+	(errors: Partial<IOrderForm>) => {
+		const { email, phone } = errors;
+		contacts.valid = !email && !phone;
+		contacts.errors = Object.values({ phone, email })
+			.filter((i) => !!i)
+			.join('; ');
+	}
+);
 
 // пользователь подтверждает контактную информацию
-events.on('contacts:submit', () => {
+events.on(ViewEvent.ContactsSubmit, () => {
 	const apiData = {
 		payment: appData.order.payment,
 		email: appData.order.email,

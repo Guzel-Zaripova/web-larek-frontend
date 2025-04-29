@@ -19,3 +19,31 @@ export const CARD_CATEGORY_CLASSES: Record<TCategory, string> = {
 	кнопка: 'card__category_button',
 	другое: 'card__category_other',
 };
+
+export enum ModelEvent {
+	CardAdded = 'card:added',
+	CardDeleted = 'card:deleted',
+	ItemsChanged = 'items:changed',
+	PreviewChanged = 'preview:changed',
+	OrderReady = 'order:ready',
+	OrderFormErrorsChange = 'orderFormErrors:change',
+	ContactsReady = 'contacts:ready',
+	ContactsFormErrorsChange = 'contactsFormErrors:change',
+}
+
+export enum ViewEvent {
+	ModalOpen = 'modal:open',
+	ModalClose = 'modal:close',
+	CardAdd = 'card:add',
+	CardDelete = 'card:delete',
+	CardSelect = 'card:select',
+	BasketOpen = 'basket:open',
+	BasketSubmit = 'basket:submit',
+	OrderCardChange = 'order.card:change',
+	OrderCashChange = 'order.cash:change',
+	OrderAddressChange = 'order.address:change',
+	OrderSubmit = 'order:submit',
+	ContactsEmailChange = 'contacts.email:change',
+	ContactsPhoneChange = 'contacts.phone:change',
+	ContactsSubmit = 'contacts:submit',
+}
