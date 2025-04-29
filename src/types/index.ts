@@ -1,5 +1,3 @@
-import { CardData } from '../components/model/CardData';
-
 export type TCategory =
 	| 'софт-скил'
 	| 'хард-скил'
@@ -40,21 +38,20 @@ export interface IOrderResult {
 
 export interface ILarekAPI {
 	getProductList: () => Promise<ICard[]>;
-	getProductItem: (id: string) => Promise<ICard>;
 	orderProducts: (order: IOrderProducts) => Promise<IOrderResult>;
 }
 
 export interface ILarekData {
-	catalog: CardData[];
+	catalog: ICard[];
 	order: IOrder;
 	preview: string | null;
 
-	addToBasket(item: CardData): void;
-	deleteItem(item: CardData): void;
+	addToBasket(item: ICard): void;
+	deleteItem(item: ICard): void;
 	getTotalItem(): number;
 	getTotalPrice(): number;
 	setCatalog(items: ICard[]): void;
-	setPreview(item: CardData): void;
+	setPreview(item: ICard): void;
 	clearPreview(): void;
 	setOrderField(field: keyof IOrderForm, value: string): void;
 	validateOrder(): boolean;
@@ -75,7 +72,7 @@ export interface IPage {
 }
 
 export type CatalogChangeEvent = {
-	catalog: CardData[];
+	catalog: ICard[];
 };
 
 export interface ICardActions {
@@ -113,5 +110,3 @@ export interface IFormState {
 	valid: boolean;
 	errors: string[];
 }
-
-export type TFormErrors = Partial<Record<keyof IOrderForm, string>>;

@@ -1,5 +1,5 @@
 import { ICardActions, TCategory } from '../../types';
-import { cardCategory } from '../../utils/constants';
+import { CARD_CATEGORY_CLASSES } from '../../utils/constants';
 import { ensureElement } from '../../utils/utils';
 import { Component } from '../base/Component';
 
@@ -73,7 +73,7 @@ export class CardCatalog extends Card<CardCatalog> {
 
 	set category(value: TCategory) {
 		this.setText(this._category, value);
-		this._category.classList.add(cardCategory[value]);
+		this.toggleClass(this._category, CARD_CATEGORY_CLASSES[value], true);
 	}
 
 	set image(value: string) {
@@ -96,7 +96,7 @@ export class CardPreview extends Card<CardPreview> {
 
 	set category(value: TCategory) {
 		this.setText(this._category, value);
-		this._category.classList.add(cardCategory[value]);
+		this.toggleClass(this._category, CARD_CATEGORY_CLASSES[value], true);
 	}
 
 	set image(value: string) {
@@ -108,7 +108,7 @@ export class CardPreview extends Card<CardPreview> {
 	}
 
 	set actionText(value: string) {
-		this._button.textContent = value;
+		this.setText(this._button, value);
 	}
 }
 

@@ -1,5 +1,4 @@
 import { EventEmitter } from './components/base/Events';
-import { CardData } from './components/model/CardData';
 import { LarekApi } from './components/LarekAPI';
 import { LarekData } from './components/model/LarekData';
 import { Basket } from './components/view/Basket';
@@ -10,7 +9,7 @@ import { Page } from './components/view/Page';
 import { PaymentDetails } from './components/view/PaymentDetails';
 import { Success } from './components/view/Success';
 import './scss/styles.scss';
-import { CatalogChangeEvent, IOrderForm } from './types';
+import { CatalogChangeEvent, ICard, IOrderForm } from './types';
 import { API_URL, CDN_URL } from './utils/constants';
 import { cloneTemplate, ensureElement } from './utils/utils';
 
@@ -58,12 +57,12 @@ events.on<CatalogChangeEvent>('items:changed', () => {
 });
 
 // пользователь выбирает карточку
-events.on('card:select', (item: CardData) => {
+events.on('card:select', (item: ICard) => {
 	appData.setPreview(item);
 });
 
 // рендер карточки в превью
-const renderCardPreview = (item: CardData) => {
+const renderCardPreview = (item: ICard) => {
 	const selected = appData.order.items.some(
 		(orderItem) => orderItem.id === item.id
 	);
@@ -88,16 +87,9 @@ const renderCardPreview = (item: CardData) => {
 };
 
 // изменяется элемент предварительного просмотра
-events.on('preview:changed', (item: CardData) => {
+events.on('preview:changed', (item: ICard) => {
 	if (item) {
-		api
-			.getProductItem(item.id)
-			.then(() => {
-				renderCardPreview(item);
-			})
-			.catch((err) => {
-				console.error(err);
-			});
+		renderCardPreview(item);
 	} else {
 		modal.close();
 	}
@@ -115,23 +107,23 @@ events.on('modal:close', () => {
 });
 
 // пользователь добавляет карточку в корзину
-events.on('card:add', (item: CardData) => {
+events.on('card:add', (item: ICard) => {
 	appData.addItem(item);
 });
 
 // в заказ добавляется новый элемент
-events.on('card:added', (item: CardData) => {
+events.on('card:added', (item: ICard) => {
 	page.counter = appData.getTotalItem();
 	renderCardPreview(item);
 });
 
 // пользователь удаляет карточку из корзины
-events.on('card:delete', (item: CardData) => {
+events.on('card:delete', (item: ICard) => {
 	appData.deleteItem(item);
 });
 
 // из заказа удаляется элемент
-events.on('card:deleted', (item: CardData) => {
+events.on('card:deleted', (item: ICard) => {
 	page.counter = appData.getTotalItem();
 	if (appData.preview === item.id) {
 		renderCardPreview(item);
@@ -261,6 +253,7 @@ events.on('contacts:submit', () => {
 		.then((result) => {
 			appData.clearOrder();
 			page.counter = appData.getTotalItem();
+			order.resetButtonStates();
 			const success = new Success(cloneTemplate(successTemplate), {
 				onClick: () => {
 					modal.close();

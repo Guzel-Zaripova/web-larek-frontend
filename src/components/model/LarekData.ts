@@ -1,10 +1,9 @@
 import { Model } from '../base/Model';
-import { CardData } from './CardData';
 import { FormErrors, ICard, ILarekData, IOrder, IOrderForm } from '../../types';
-import { formError } from '../../utils/constants';
+import { FORM_ERROR_MESSAGES } from '../../utils/constants';
 
 export class LarekData extends Model<ILarekData> {
-	catalog: CardData[];
+	catalog: ICard[];
 	order: IOrder = {
 		payment: '',
 		address: '',
@@ -16,12 +15,12 @@ export class LarekData extends Model<ILarekData> {
 	preview: string | null;
 	formErrors: FormErrors = {};
 
-	addItem(item: CardData): void {
+	addItem(item: ICard): void {
 		this.order.items.push(item);
 		this.emitChanges('card:added', item);
 	}
 
-	deleteItem(item: CardData): void {
+	deleteItem(item: ICard): void {
 		const index = this.order.items.findIndex(
 			(orderItem) => orderItem.id === item.id
 		);
@@ -45,11 +44,11 @@ export class LarekData extends Model<ILarekData> {
 	}
 
 	setCatalog(items: ICard[]): void {
-		this.catalog = items.map((item) => new CardData(item, this.events));
+		this.catalog = items;
 		this.emitChanges('items:changed', { catalog: this.catalog });
 	}
 
-	setPreview(item: CardData): void {
+	setPreview(item: ICard): void {
 		this.preview = item.id;
 		this.emitChanges('preview:changed', item);
 	}
@@ -69,10 +68,10 @@ export class LarekData extends Model<ILarekData> {
 	validateOrder(): boolean {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.payment) {
-			errors.payment = formError.payment;
+			errors.payment = FORM_ERROR_MESSAGES.payment;
 		}
 		if (!this.order.address) {
-			errors.address = formError.address;
+			errors.address = FORM_ERROR_MESSAGES.address;
 		}
 		this.formErrors = errors;
 		this.events.emit('orderFormErrors:change', this.formErrors);
@@ -90,10 +89,10 @@ export class LarekData extends Model<ILarekData> {
 	validateContacts(): boolean {
 		const errors: typeof this.formErrors = {};
 		if (!this.order.email) {
-			errors.email = formError.email;
+			errors.email = FORM_ERROR_MESSAGES.email;
 		}
 		if (!this.order.phone) {
-			errors.phone = formError.phone;
+			errors.phone = FORM_ERROR_MESSAGES.phone;
 		}
 		this.formErrors = errors;
 		this.events.emit('contactsFormErrors:change', this.formErrors);
